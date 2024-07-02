@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  .container
+    h1 Weather Dashboard
+    .search-section
+      h2 Enter a City Name
+      input#cityInput(type='text', placeholder='E.g., New York, London, Tokyo')
+      button#searchBtn Search
+      .divider
+        span or
+      button#currentLocationBtn Use Current Location
+    #currentWeather
+    #forecast
+      h2 4-Day Forecast
+      .forecast-container
+
+  script(src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js')
+  link(href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css', rel='stylesheet')
+  script.
+    var mapboxToken = '#{mapboxToken}';
+  script(src='/javascripts/weather.js')

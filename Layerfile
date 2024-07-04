@@ -1,9 +1,9 @@
 # Use Ubuntu 18.04 as the base image
 FROM vm/ubuntu:18.04
 
-# Install Node.js 18.x (Latest LTS version as of 2024)
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-RUN apt-get install -y nodejs
+# Install Node.js 16.x (LTS version compatible with Ubuntu 18.04)
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt-get update && apt-get install -y nodejs
 
 # Debug: Print Node.js and npm versions
 RUN node -v && npm -v
@@ -20,6 +20,9 @@ RUN cat package.json
 # Install project dependencies
 RUN npm ci
 
+# Install nodemon globally
+RUN npm install -g nodemon
+
 # Set the environment variables as secrets
 SECRET ENV OPENWEATHERMAP_API_KEY
 SECRET ENV MAPBOX_TOKEN
@@ -28,11 +31,11 @@ SECRET ENV MAPBOX_TOKEN
 RUN echo "OpenWeatherMap API Key is set: $([[ -n $OPENWEATHERMAP_API_KEY ]] && echo 'Yes' || echo 'No')"
 RUN echo "Mapbox Token is set: $([[ -n $MAPBOX_TOKEN ]] && echo 'Yes' || echo 'No')"
 
-# Debug: Show contents of bin/www
-RUN cat bin/www
+# Debug: Show contents of app.js
+RUN cat app.js
 
-# Start the Express server in the background
-RUN BACKGROUND npm start
+# Start the Express server in the background using nodemon
+RUN BACKGROUND nodemon app.js
 
 # Wait for the server to start
 RUN sleep 10
@@ -44,8 +47,8 @@ RUN netstat -tulpn | grep :3000 || echo "No process found listening on port 3000
 RUN if ! netstat -tulpn | grep :3000; then \
     echo "Server logs:"; \
     cat *.log 2>/dev/null || echo "No log files found"; \
-    echo "npm start output:"; \
-    npm start; \
+    echo "nodemon output:"; \
+    nodemon app.js; \
 fi
 
 # Expose the application

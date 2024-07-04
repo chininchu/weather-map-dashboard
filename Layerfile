@@ -6,8 +6,8 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash && \
     apt install nodejs && \
     rm -f /etc/apt/sources.list.d/nodesource.list
 
-# Debug: Print current working directory
-RUN pwd
+# Debug: Print Node.js and npm versions
+RUN node -v && npm -v
 
 # Copy the entire project directory
 COPY . .
@@ -28,11 +28,26 @@ RUN echo "OPENWEATHERMAP_API_KEY=your_openweathermap_api_key_here" > .env && \
 # Debug: List installed packages
 RUN npm list --depth=0
 
-# Install nodemon for development
+# Debug: Show contents of bin/www
+RUN cat bin/www
+
+# Debug: Show contents of app.js
+RUN cat app.js
+
+# Install nodemon globally
 RUN npm install -g nodemon
 
-# Start the Express server using nodemon
-RUN BACKGROUND nodemon ./bin/www
+# Start the Express server in the background and redirect output to a log file
+RUN BACKGROUND nodemon ./bin/www > server.log 2>&1
+
+# Wait for a moment to allow the server to start
+RUN sleep 10
+
+# Debug: Display the server log
+RUN cat server.log
+
+# Debug: Check if the process is running and listening on port 3000
+RUN netstat -tulpn | grep :3000
 
 # Expose the application
 EXPOSE WEBSITE http://localhost:3000

@@ -6,9 +6,15 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash && \
     apt install nodejs && \
     rm -f /etc/apt/sources.list.d/nodesource.list
 
+# Debug: Show contents of package.json
+RUN cat package.json
+
 # Install project dependencies
 COPY package.json package-lock.json ./
 RUN npm ci
+
+# Explicitly install axios
+RUN npm install axios
 
 # Copy the rest of the application code
 COPY . .
@@ -19,6 +25,9 @@ RUN echo "OPENWEATHERMAP_API_KEY=your_openweathermap_api_key_here" > .env && \
 
 # Install nodemon for development
 RUN npm install -g nodemon
+
+# Debug: List installed packages
+RUN npm list
 
 # Start the Express server using nodemon
 RUN BACKGROUND nodemon ./bin/www

@@ -20,9 +20,6 @@ RUN cat package.json
 # Install project dependencies
 RUN npm ci
 
-# Install nodemon globally
-RUN npm install -g nodemon
-
 # Set the environment variables as secrets
 SECRET ENV OPENWEATHERMAP_API_KEY
 SECRET ENV MAPBOX_TOKEN
@@ -34,8 +31,11 @@ RUN echo "Mapbox Token is set: $([[ -n $MAPBOX_TOKEN ]] && echo 'Yes' || echo 'N
 # Debug: Show contents of app.js
 RUN cat app.js
 
-# Start the Express server in the background using nodemon
-RUN BACKGROUND nodemon app.js
+# Debug: Show contents of bin/www
+RUN cat bin/www
+
+# Start the Express server in the background
+RUN BACKGROUND npm start
 
 # Wait for the server to start
 RUN sleep 10
@@ -43,12 +43,12 @@ RUN sleep 10
 # Debug: Check if the process is running and listening on port 3000
 RUN netstat -tulpn | grep :3000 || echo "No process found listening on port 3000"
 
-# If the server isn't running, display the logs
+# If the server isn't running, display the logs and try to start it in the foreground
 RUN if ! netstat -tulpn | grep :3000; then \
     echo "Server logs:"; \
     cat *.log 2>/dev/null || echo "No log files found"; \
-    echo "nodemon output:"; \
-    nodemon app.js; \
+    echo "npm start output:"; \
+    npm start; \
 fi
 
 # Expose the application

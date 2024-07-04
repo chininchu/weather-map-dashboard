@@ -51,4 +51,4 @@ RUN if ! netstat -tulpn | grep :$PORT; then \
 fi
 
 # Expose the application on the specified port
-EXPOSE WEBSITE http://localhost:$PORT
+EXPOSE WEBSITE http://localhost:3000

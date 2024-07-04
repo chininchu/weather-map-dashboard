@@ -1,15 +1,27 @@
-#This is an example webapp.io configuration for NodeJS
+# Use Ubuntu 18.04 as the base image
 FROM vm/ubuntu:18.04
-# To note: Layerfiles create VMs, *not* containers!
 
-# Install node
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash && \
+# Install Node.js (using a more recent version)
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash && \
     apt install nodejs && \
     rm -f /etc/apt/sources.list.d/nodesource.list
-RUN npm install -g http-server
 
+# Install project dependencies
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy the rest of the application code
 COPY . .
-RUN echo 'hello' > hello.html
 
-RUN BACKGROUND http-server -p 8000
-EXPOSE WEBSITE http://localhost:8000
+# Create .env file with environment variables
+RUN echo "OPENWEATHERMAP_API_KEY=your_openweathermap_api_key_here" > .env && \
+    echo "MAPBOX_TOKEN=your_mapbox_token_here" >> .env
+
+# Install nodemon for development
+RUN npm install -g nodemon
+
+# Start the Express server using nodemon
+RUN BACKGROUND nodemon ./bin/www
+
+# Expose the application
+EXPOSE WEBSITE http://localhost:3000

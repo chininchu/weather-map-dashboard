@@ -12,7 +12,7 @@ RUN node -v && npm -v
 # Copy the entire project directory
 COPY . .
 
-# Debug: List directory contents after copy
+# Debug: List directory contents
 RUN ls -la
 
 # Debug: Show contents of package.json
@@ -21,9 +21,11 @@ RUN cat package.json
 # Install project dependencies
 RUN npm install
 
-# Create .env file with environment variables
-RUN echo "OPENWEATHERMAP_API_KEY=your_openweathermap_api_key_here" > .env && \
-    echo "MAPBOX_TOKEN=your_mapbox_token_here" >> .env
+# Create .env file with environment variables (if not already present)
+RUN if [ ! -f .env ]; then \
+    echo "OPENWEATHERMAP_API_KEY=your_openweathermap_api_key_here" > .env && \
+    echo "MAPBOX_TOKEN=your_mapbox_token_here" >> .env; \
+    fi
 
 # Debug: List installed packages
 RUN npm list --depth=0
@@ -47,7 +49,7 @@ RUN sleep 10
 RUN cat server.log
 
 # Debug: Check if the process is running and listening on port 3000
-RUN netstat -tulpn | grep :3000
+RUN netstat -tulpn | grep :3000 || echo "No process found listening on port 3000"
 
 # Expose the application
 EXPOSE WEBSITE http://localhost:3000

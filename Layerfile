@@ -1,10 +1,9 @@
 # Use Ubuntu 18.04 as the base image
 FROM vm/ubuntu:18.04
 
-# Install Node.js (using a more recent version)
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash && \
-    apt install nodejs && \
-    rm -f /etc/apt/sources.list.d/nodesource.list
+# Install Node.js 18.x (Latest LTS version as of 2024)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install -y nodejs
 
 # Debug: Print Node.js and npm versions
 RUN node -v && npm -v
@@ -19,37 +18,35 @@ RUN ls -la
 RUN cat package.json
 
 # Install project dependencies
-RUN npm install
+RUN npm ci
 
-# Create .env file with environment variables (if not already present)
-RUN if [ ! -f .env ]; then \
-    echo "OPENWEATHERMAP_API_KEY=your_openweathermap_api_key_here" > .env && \
-    echo "MAPBOX_TOKEN=your_mapbox_token_here" >> .env; \
-    fi
+# Set the environment variables as secrets
+SECRET ENV OPENWEATHERMAP_API_KEY
+SECRET ENV MAPBOX_TOKEN
 
-# Debug: List installed packages
-RUN npm list --depth=0
+# Verify the API keys are set (this will not print the actual keys)
+RUN echo "OpenWeatherMap API Key is set: $([[ -n $OPENWEATHERMAP_API_KEY ]] && echo 'Yes' || echo 'No')"
+RUN echo "Mapbox Token is set: $([[ -n $MAPBOX_TOKEN ]] && echo 'Yes' || echo 'No')"
 
 # Debug: Show contents of bin/www
 RUN cat bin/www
 
-# Debug: Show contents of app.js
-RUN cat app.js
+# Start the Express server in the background
+RUN BACKGROUND npm start
 
-# Install nodemon globally
-RUN npm install -g nodemon
-
-# Start the Express server in the background and redirect output to a log file
-RUN BACKGROUND nodemon ./bin/www > server.log 2>&1
-
-# Wait for a moment to allow the server to start
+# Wait for the server to start
 RUN sleep 10
-
-# Debug: Display the server log
-RUN cat server.log
 
 # Debug: Check if the process is running and listening on port 3000
 RUN netstat -tulpn | grep :3000 || echo "No process found listening on port 3000"
+
+# If the server isn't running, display the logs
+RUN if ! netstat -tulpn | grep :3000; then \
+    echo "Server logs:"; \
+    cat *.log 2>/dev/null || echo "No log files found"; \
+    echo "npm start output:"; \
+    npm start; \
+fi
 
 # Expose the application
 EXPOSE WEBSITE http://localhost:3000

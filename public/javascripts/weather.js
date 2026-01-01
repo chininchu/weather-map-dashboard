@@ -13,7 +13,10 @@ document.addEventListener("DOMContentLoaded", function () {
   currentLocationBtn.addEventListener("click", function () {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        function (position) {
+
+        
+
+        function (position)  {
           getWeatherData(position.coords.latitude, position.coords.longitude);
         },
         function (error) {

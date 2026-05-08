@@ -1,6 +1,3 @@
-// Replace this with your Cloudflare Worker URL after deploying it
-const WORKER_URL = "https://weather-proxy.YOUR_SUBDOMAIN.workers.dev";
-
 document.addEventListener("DOMContentLoaded", function () {
   const searchBtn = document.getElementById("searchBtn");
   const cityInput = document.getElementById("cityInput");
@@ -53,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function getWeatherData(lat, lon) {
-    fetch(`${WORKER_URL}?lat=${lat}&lon=${lon}`)
+    fetch(`/weather?lat=${lat}&lon=${lon}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

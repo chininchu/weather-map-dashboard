@@ -1,8 +1,9 @@
 "use strict";
 
-const express = require("express");
+import express from "express";
+import axios from "axios";
+
 const router = express.Router();
-const axios = require("axios");
 
 const OPENWEATHERMAP_API_KEY = process.env.OPENWEATHERMAP_API_KEY;
 const OPENWEATHERMAP_API_URL =
@@ -59,4 +60,4 @@ router.get("/weather", async function (req, res, next) {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,6 +1,6 @@
 "use strict";
 
-const serverless = require("serverless-http");
-const app = require("../../app");
+import serverless from "serverless-http";
+import app from "../../app.js";
 
-module.exports.handler = serverless(app);
+export const handler = serverless(app);

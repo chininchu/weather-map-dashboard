@@ -1,17 +1,18 @@
 "use strict";
 
-require("dotenv").config();
-var express = require("express");
-var createError = require("http-errors");
-var path = require("node:path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+import "dotenv/config";
+import express from "express";
+import createError from "http-errors";
+import path from "node:path";
+import cookieParser from "cookie-parser";
+import logger from "morgan";
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var projectRoot = process.cwd();
+import indexRouter from "./routes/index.js";
+import usersRouter from "./routes/users.js";
 
-var app = express();
+const projectRoot = process.cwd();
+
+const app = express();
 app.disable("x-powered-by");
 
 // view engine setup
@@ -48,4 +49,4 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-module.exports = app;
+export default app;

@@ -9,19 +9,20 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var projectRoot = process.cwd();
 
 var app = express();
 app.disable("x-powered-by");
 
 // view engine setup
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(projectRoot, "views"));
 app.set("view engine", "jade");
 
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(projectRoot, "public")));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);

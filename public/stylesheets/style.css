@@ -1,5 +1,5 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background-color: #e6f2ff;
   margin: 0;
   padding: 0;
@@ -9,12 +9,31 @@ body {
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
+}
 
-  
+#map {
+  height: 320px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+#status {
+  min-height: 24px;
+  margin: 10px 0 0;
+}
+
+#status.error {
+  color: #a12626;
+}
+
+label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
 }
 
 h1 {
-  background-color: #6495ed;
+  background-color: #315ca8;
   color: white;
   padding: 20px;
   margin: -20px -20px 20px -20px;
@@ -43,7 +62,7 @@ input[type="text"] {
 button {
   width: 100%;
   padding: 10px;
-  background-color: #6495ed;
+  background-color: #315ca8;
   color: white;
   border: none;
   border-radius: 5px;
@@ -62,7 +81,7 @@ button {
 }
 
 #currentWeather {
-  background-color: #6495ed;
+  background-color: #315ca8;
   color: white;
   padding: 20px;
   border-radius: 5px;
@@ -75,10 +94,11 @@ button {
 .forecast-container {
   display: flex;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .forecast-day {
-  background-color: #708090;
+  background-color: #40505f;
   color: white;
   padding: 15px;
   border-radius: 5px;
@@ -89,4 +109,15 @@ button {
 .weather-icon {
   width: 50px;
   height: 50px;
+}
+
+@media (max-width: 700px) {
+  #currentWeather,
+  .forecast-container {
+    flex-direction: column;
+  }
+
+  .forecast-day {
+    width: auto;
+  }
 }

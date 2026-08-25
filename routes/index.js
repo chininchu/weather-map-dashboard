@@ -1,12 +1,14 @@
-var express = require("express");
-var router = express.Router();
-var axios = require("axios");
+"use strict";
+
+const express = require("express");
+const router = express.Router();
+const axios = require("axios");
 
 const OPENWEATHERMAP_API_KEY = process.env.OPENWEATHERMAP_API_KEY;
 const OPENWEATHERMAP_API_URL =
   "https://api.openweathermap.org/data/2.5/forecast";
 
-/* GET home page. */
+// Render the dashboard and provide the browser with its Mapbox token.
 router.get("/", function (req, res, next) {
   res.render("index", {
     title: "Weather Map",
@@ -16,17 +18,33 @@ router.get("/", function (req, res, next) {
 
 router.get("/weather", async function (req, res, next) {
   const { lat, lon } = req.query;
-  if (!lat || !lon) {
+  const latitude = Number(lat);
+  const longitude = Number(lon);
+
+  // Validate coordinates before making an external API request.
+  if (
+    !Number.isFinite(latitude) ||
+    !Number.isFinite(longitude) ||
+    latitude < -90 ||
+    latitude > 90 ||
+    longitude < -180 ||
+    longitude > 180
+  ) {
     return res
       .status(400)
-      .json({ error: "Latitude and longitude are required" });
+      .json({ error: "Valid latitude and longitude are required" });
   }
 
+  if (!OPENWEATHERMAP_API_KEY) {
+    return res.status(503).json({ error: "Weather service is not configured" });
+  }
+
+  // Keep the OpenWeatherMap key on the server; the browser only receives data.
   try {
     const response = await axios.get(OPENWEATHERMAP_API_URL, {
       params: {
-        lat: lat,
-        lon: lon,
+        lat: latitude,
+        lon: longitude,
         appid: OPENWEATHERMAP_API_KEY,
         units: "metric",
       },
@@ -35,11 +53,9 @@ router.get("/weather", async function (req, res, next) {
   } catch (error) {
     console.error(
       "Error fetching weather data:",
-      error.response ? error.response.data : error.message
+      error.response ? error.response.data : error.message,
     );
-    res
-      .status(500)
-      .json({ error: "Failed to fetch weather data", details: error.message });
+    res.status(502).json({ error: "Failed to fetch weather data" });
   }
 });
 

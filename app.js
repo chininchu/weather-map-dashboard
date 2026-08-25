@@ -1,6 +1,9 @@
+"use strict";
+
 require("dotenv").config();
 var express = require("express");
-var path = require("path");
+var createError = require("http-errors");
+var path = require("node:path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
@@ -8,6 +11,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
 var app = express();
+app.disable("x-powered-by");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

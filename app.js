@@ -24,6 +24,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(projectRoot, "public")));
 
+// Avoid a noisy 404 when the browser looks for a site icon.
+app.get("/favicon.ico", function (req, res) {
+  res.sendStatus(204);
+});
+
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 

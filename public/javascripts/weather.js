@@ -141,6 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
     details.append(heading, icon);
     [
       `Temperature: ${weather.main.temp}°C`,
+      `Feels like: ${weather.main.feels_like}°C`,
       `Wind: ${weather.wind.speed} M/S`,
       `Humidity: ${weather.main.humidity}%`,
       weather.weather[0].description,
